@@ -8,12 +8,15 @@ const Product = require('../models/product');
 
 // Register
 router.post('/register', (req, res, next) => {
+  var emptyArr = ['test'];
+  emptyArr.length = 0;
   let newUser = new User({
     name: req.body.name,
     email: req.body.email,
     username: req.body.username,
     password: req.body.password,
     numItemsInCart: 0,
+    itemsInCart: emptyArr
   });
 
   User.addUser(newUser, (err, user) => {
