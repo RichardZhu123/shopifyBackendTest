@@ -19,6 +19,13 @@ npm start
 Field | Description
 ------|------------
 **id** | The item's unique id.
+**name** | Name of customer.
+**email** | Email of customer.
+**username** | Username of customer.
+**title** | Name of product.
+**price** | Price of product.
+**inventory_count** | Number of product in inventory.
+**excludeUnavailable** | Boolean describing whether unavailable inventory is to be excluded from search
 
 All API calls must contain the following headers
 
@@ -42,26 +49,78 @@ Live endpoint: https://shopifybackendtest.herokuapp.com/product/create
 }
 ```
 
+### Fetch (Single) Product
 
 ```bash
 POST /product/fetch       // Fetches product
 ```
-Live endpoint: https://shopifybackendtest.herokuapp.com/product/create
+Live endpoint: https://shopifybackendtest.herokuapp.com/product/fetch
 ```javascript
 {
 	"title": "testProduct"
 }
 ```
 
-### User Registration/Authentication
+### Fetch All Products
+```bash
+POST /product/fetchall       // Fetches all products
+```
+Live endpoint: https://shopifybackendtest.herokuapp.com/product/fetchall
+```javascript
+{
+	"excludeUnavailable": true
+}
+```
+
+### Purchase Product
+```bash
+POST /product/purchase       // Purchases product, decreasing inventory_count by 1
+```
+Live endpoint: https://shopifybackendtest.herokuapp.com/product/purchase
+```javascript
+{
+	"title": "testProduct"
+}
+```
+
+### View Cart
+Fetch products contained in default user(username: test123)'s cart.
+```bash
+GET /product/viewCart       // Fetches cart
+```
+Live endpoint: https://shopifybackendtest.herokuapp.com/product/viewCart
+```javascript
+{ }
+```
+
+### Add to Cart
+Adds item to cart, but the product stays in the inventory (inventory_count doesn't change)
+```bash
+POST /product/addToCart       // Adds item to cart
+```
+Live endpoint: https://shopifybackendtest.herokuapp.com/product/addToCart
+```javascript
+{
+	"title": "testProduct"
+}
+```
+
+### Checkout
+Purchases all items in default user(username: test123)'s cart and empties the cart
+```bash
+POST /product/checkout       // Checkout of all items in cart
+```
+Live endpoint: https://shopifybackendtest.herokuapp.com/product/checkout
+```javascript
+{ }
+```
+
+### User Registration
 ```bash
 POST /users/register       // Adds user to database
 ```
 
+### User Authentication
 ```bash
 POST /users/authenticate   // Gives back a token
-```
-
-```bash
-GET /users/profile         // Needs valid json web token to access (not relevant to challenge)
 ```

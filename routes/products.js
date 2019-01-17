@@ -48,7 +48,6 @@ router.post('/fetch', (req, res, next) => {
 
 // Fetch All Products
 router.post('/fetchall', (req, res, next) => {
-  const title = req.body.title;
   const excludeUnavailable = req.body.excludeUnavailable;
 
   // Get all products, including unavailable ones
