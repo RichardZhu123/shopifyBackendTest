@@ -38,7 +38,7 @@ module.exports.getAllAvailable = function(callback){
 
 module.exports.purchase = function(title){
   const query = {title: title};
-  const update = {$inc: { "price": 1 }};
+  const update = {$inc: { price: 1 }};
   Product.update(query, update, {multi: true});
 }
 
