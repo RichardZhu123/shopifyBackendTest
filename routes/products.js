@@ -90,23 +90,23 @@ router.post('/fetchall', (req, res, next) => {
   // Purchase Single Product
   router.post('/purchase', (req, res, next) => {
     const title = req.body.title;
-    Product.purchase(title);
 
     Product.getProductByTitle(title, (err, product) => {
       if(err) throw err;
-      if(!product){
-        return res.json({success: false, msg: 'Product not found'});
+      if(!product || product.inventory_count <= parseInt(0)){
+        return res.json({success: false, msg: 'Product not available'});
       }
       else {
-        Product.purchase(title);
-        console.log(typeof product.inventory_count);
-        res.json({
-          success: true,
-          product: {
-            title: product.title,
-            price: product.price,
-            inventory_count: product.inventory_count
-          }
+        Product.purchase(title, (err, prod) => {
+          if(err) throw err;
+          res.json({
+            success: true,
+            product: {
+              title: product.title,
+              price: product.price,
+              inventory_count: product.inventory_count-1
+            }
+          });
         });
       }
 

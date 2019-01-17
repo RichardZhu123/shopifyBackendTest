@@ -5,13 +5,14 @@ const config = require('../config/database');
 // Product Schema
 const ProductSchema = mongoose.Schema({
   title: {
-    type: String
+    type: String,
+    required: true
   },
   price: {
     type: Number,
     required: true
   },
-  inventory_count:{
+  inventory_count: {
     type: Number,
     required: true
   }
@@ -36,10 +37,10 @@ module.exports.getAllAvailable = function(callback){
   Product.find({inventory_count: { $gt: 0}}, callback).select("-_id -__v");
 }
 
-module.exports.purchase = function(title){
+module.exports.purchase = function(title, callback){
   const query = {title: title};
-  const update = {$inc: { price: 1 }};
-  Product.update(query, update, {multi: true});
+  const update = { $inc: {inventory_count: -1}};
+  Product.update(query, update, {multi: true}, callback);
 }
 
 module.exports.addProduct = function(newProduct, callback){
