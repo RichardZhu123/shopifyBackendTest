@@ -4,6 +4,7 @@ const passport = require('passport');
 const jwt = require('jsonwebtoken');
 const config = require('../config/database');
 const Product = require('../models/product');
+const User = require('../models/user');
 
 // Add Product
 router.post('/create', (req, res, next) => {
@@ -113,9 +114,14 @@ router.post('/fetchall', (req, res, next) => {
     });
   });
 
+
 // Profile
 router.get('/profile', passport.authenticate('jwt', {session:false}), (req, res, next) => {
-  res.json({user: req.user});
+  let currUser = req.user;
+  res.json({
+    name: user.name,
+    itemsInCart: currUser.itemsInCart
+  });
 });
 
 module.exports = router;

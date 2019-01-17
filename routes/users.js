@@ -4,6 +4,7 @@ const passport = require('passport');
 const jwt = require('jsonwebtoken');
 const config = require('../config/database');
 const User = require('../models/user');
+const Product = require('../models/product');
 
 // Register
 router.post('/register', (req, res, next) => {
@@ -12,8 +13,7 @@ router.post('/register', (req, res, next) => {
     email: req.body.email,
     username: req.body.username,
     password: req.body.password,
-    isPurchaseInitiated: 0,
-    itemsInCart: ''
+    numItemsInCart: 0,
   });
 
   User.addUser(newUser, (err, user) => {
@@ -61,6 +61,72 @@ router.post('/authenticate', (req, res, next) => {
     });
   });
 });
+
+// View Contents of Cart
+router.get('/viewCart', (req, res, next) => {
+  // let currUser = req.user; // For user implementation (not implemented)
+  User.getUserByUsername("test123", (err, currUser) => { // Get user attached to cart
+    if(err) throw err;
+    res.json({
+      success: true,
+      // name: currUser.name, // Not shown for Shopify test purposes
+      itemsInCart: currUser.itemsInCart
+    });
+  }); // Default user for testing purposes
+
+});
+
+// Add product to cart
+router.post('/addToCart', (req, res, next) => {
+  // let user = req.user; // For user implementation (not implemented)
+  const title = req.body.title;
+
+  User.getUserByUsername("test123", (err, user) => { // Get user who owns cart
+    if(err) throw err;
+      Product.getProductByTitle(title, (err, currProduct) => {
+        User.addToCart(currProduct, user, (err, currUser) => { // Add product to user's cart
+          if(currProduct.inventory_count <= 0){
+            res.json({success: false, msg: 'Product not in stock'})
+          }
+          else {
+            res.json({
+              success: true,
+              // name: currUser.name, // Not shown for Shopify test purposes
+              itemsInCart: user.itemsInCart
+            });
+          }
+        })
+      });
+
+  }); // Default user for testing purposes
+
+});
+
+// Checkout cart
+router.post('/checkout', (req, res, next) => {
+  // let user = req.user; // For user implementation (not implemented)
+
+  User.getUserByUsername("test123", (err, currUser) => { // Get user who owns cart
+    if(err) throw err;
+      User.checkout(currUser, (err, user) => {
+        if(err){
+          res.json({
+            success: false,
+            itemsInCart: user.itemsInCart,
+            msg: 'Checkout Unsuccessful'
+          })
+        }
+        else {
+          res.json({
+            success: true,
+            // name: currUser.name, // Not shown for Shopify test purposes
+            itemsInCart: user.itemsInCart,
+            msg: 'Checkout Successful'
+          });
+        }
+      });
+    }); // Default user for testing purposes
+  });
 
 // Profile
 router.get('/profile', passport.authenticate('jwt', {session:false}), (req, res, next) => {

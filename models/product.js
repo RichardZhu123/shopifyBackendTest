@@ -26,7 +26,7 @@ module.exports.getProductById = function(id, callback){
 
 module.exports.getProductByTitle = function(title, callback){
   const query = {title: title};
-  Product.findOne(query, callback);
+  Product.findOne(query, callback).select("-_id -__v"); // Don't return _id and __v fields
 }
 
 module.exports.getAllProducts = function(callback){
