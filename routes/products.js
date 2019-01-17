@@ -3,24 +3,21 @@ const router = express.Router();
 const passport = require('passport');
 const jwt = require('jsonwebtoken');
 const config = require('../config/database');
-const User = require('../models/user');
+const Product = require('../models/product');
 
-// Register
-router.post('/register', (req, res, next) => {
-  let newUser = new User({
-    name: req.body.name,
-    email: req.body.email,
-    username: req.body.username,
-    password: req.body.password,
-    isPurchaseInitiated: 0,
-    itemsInCart: ''
+// Add Product
+router.post('/create', (req, res, next) => {
+  let newProduct = new Product({
+    title: req.body.title,
+    price: req.body.price,
+    inventory_count: req.body.inventory_count
   });
 
-  User.addUser(newUser, (err, user) => {
+  Product.addProduct(newProduct, (err, user) => {
     if(err){
-      res.json({success: false, msg: 'Failed to register user'})
+      res.json({success: false, msg: 'Failed to add new product'})
     } else {
-      res.json({success: true, msg: 'User registered'})
+      res.json({success: true, msg: 'Product added!'})
     }
   });
 });
@@ -55,6 +52,7 @@ router.post('/authenticate', (req, res, next) => {
           }
         });
 
+        res.json({success: true, msg: 'Login successful'});
       } else {
         return res.json({success: false, msg: 'Wrong password'});
       }

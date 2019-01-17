@@ -18,6 +18,14 @@ const UserSchema = mongoose.Schema({
   password:{
     type: String,
     required: true
+  },
+  isPurchaseInitiated:{
+    type: Number,
+    required: true
+  },
+  itemsInCart:{
+    type: String,
+    required: true
   }
 });
 
@@ -39,5 +47,12 @@ module.exports.addUser = function(newUser, callback){
       newUser.password = hash;
       newUser.save(callback);
     });
+  });
+}
+
+module.exports.comparePassword = function(candidatePassword, hash, callback) {
+  bcrypt.compare(candidatePassword, hash, (err, isMatch) => {
+    if(err) throw err;
+    callback(null, isMatch);
   });
 }
